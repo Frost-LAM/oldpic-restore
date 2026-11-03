@@ -1,0 +1,8 @@
+# Map a reference filename to a face number. P1 is 1 (leftmost face).
+# The filename is the file's name inside the --refs directory, not a path.
+# Add #k (0-based, largest face first) to pick a face when the reference
+# photo itself contains more than one person. Without #k the largest face is used.
+#
+# alice-2010.jpg: 2
+# bob.png: 8
+# group-photo.jpg#1: 11

@@ -1,0 +1,78 @@
+# Defaults that matched a large group photo (NAFNet-REDS at half scale,
+# CodeFormer fidelity 0.9 blended at 70%, Real-ESRGAN mixed 75/25 with Lanczos).
+# Override with --config, or with CLI flags where those exist.
+# Rejected and intentionally not the defaults: NAFNet-GoPro, full-scale deblur,
+# a second deblur pass, Richardson-Lucy, RestorerID / InstantRestore.
+
+runtime:
+  device: auto            # auto | mps | cuda | cpu. auto: MPS, else CUDA, else CPU
+  cpu_threads: 0          # 0 = min(8, CPU count). Used by CPU and by ONNX.
+  weights_dir: null       # null = $OPR_WEIGHTS_DIR or ~/.cache/old-photo-restore/weights
+  max_faces: 0            # 0 = restore every detected face. N>0 keeps the N largest.
+
+deblur:
+  scale: 0.5              # downscale, deblur, continue from there. 1 = full scale (optional on a Mac)
+  tile: null              # null = device profile: cpu 384, mps 512, cuda 512
+  overlap: null           # null = device profile: 64
+  color_sigma: 0          # 0 = auto, min(h, w) / 8. Puts low-frequency colour back.
+
+detect:
+  tile: 640
+  overlap: 160
+  threshold: 0.60          # 0.40 let decorative carvings or patterns through. Lower via --config for a crowded, blurry group.
+  nms: 0.40
+  min_face_px: 16         # in original-image pixels
+  global_long_side: 1280  # extra full-frame pass so small faces are not missed
+
+codeformer:
+  fidelity: 0.9           # w. Higher keeps the person; lower invents more detail.
+  adain: true
+  color_sigma: 24         # match each restored face to its pre-restoration crop
+
+blend:
+  default: 0.70
+  weak: 0.55              # low-confidence or drifted faces (about 50-60%)
+  very_weak: 0.50
+  weak_det_score: 0.60
+  absolute_weak: 0.30     # ArcFace cosine of the full restore against the original
+  absolute_very_weak: 0.22
+  drift_margin: 0.04      # also weaken if restore falls this far below the deblur-only score
+  per_face: {}            # face number -> blend, e.g. {2: 0.55}. Wins over the automatic rule.
+
+upscale:
+  esrgan_weight: 0.75     # remainder is a Lanczos upscale of the same image
+  tile: null              # null = device profile: cpu 256, mps 384, cuda 512
+  overlap: null           # null = device profile: cpu 16, mps/cuda 32
+
+output:
+  scales: [1, 2]          # 1 = original size (x2plus from the half image); 2 = 2x original (x4plus)
+  jpeg_quality: 92
+  overview_max_side: 2000
+  face_cell: 320
+  face_columns: 2
+
+reference:
+  min_cosine: 0.22        # different-age photos often land well below a same-day threshold
+  min_margin: 0.03        # best face must beat the runner-up by this much
+  glint_min: 0.15         # glintr100 vetoes only when it prefers a different face
+  glint_margin: 0.05
+  detail_sigma: 8         # high-frequency band taken from the reference
+  flow_smooth: 18
+  flow_clip: 30           # damp a wild optical-flow warp; 0 disables the cap
+  feat_dilate: 25
+  feat_blur: 8
+  mouth_delta: 10         # mean abs. mouth change (0-255) above which the mouth is put back
+  orig_drop_tol: 0.05     # drop a candidate that loses more than this vs the no-reference baseline
+  blend_bonus: 0.01       # tiny preference for blend <= blend_bonus_max when scores tie
+  blend_bonus_max: 0.60
+  score_weights:
+    arc_ref: 0.40
+    glint_ref: 0.15
+    arc_orig: 0.30
+    glint_orig: 0.15
+  # 3 x 2 restores, each mixed 2 x 3 ways = 36 combinations. Proven search.
+  grid:
+    kin: [0.0, 0.4, 0.7]          # high-frequency injection into CodeFormer's input
+    fidelity: [0.7, 0.9]
+    kp: [0.0, 0.3]                # extra detail boost after CodeFormer
+    blend: [0.5, 0.7, 0.85]

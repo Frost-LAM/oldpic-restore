@@ -1,0 +1,12 @@
+# Shared Python packages. Install PyTorch for your machine first:
+#   macOS Apple Silicon:  bash scripts/setup_mac.sh
+#   Linux CPU:            bash scripts/setup_linux.sh
+#   Linux NVIDIA GPU:     pip install -r requirements-linux-cuda.txt && pip install -e .
+numpy>=1.24
+opencv-python-headless>=4.8
+onnxruntime>=1.16
+PyYAML>=6.0
+scipy>=1.11
+tqdm>=4.66
+Pillow>=10.0
+certifi>=2024.0

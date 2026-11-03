@@ -1,0 +1,15 @@
+# Optional Linux + NVIDIA GPU. Default PyPI torch is the CUDA build.
+# onnxruntime-gpu supplies CUDAExecutionProvider. Do not also install the
+# CPU-only onnxruntime package into the same environment.
+#   pip install -r requirements-linux-cuda.txt
+#   pip install -e .
+#   old-photo-restore photo.jpg -o out/ --device cuda
+torch>=2.2
+numpy>=1.24
+opencv-python-headless>=4.8
+onnxruntime-gpu>=1.16
+PyYAML>=6.0
+scipy>=1.11
+tqdm>=4.66
+Pillow>=10.0
+certifi>=2024.0

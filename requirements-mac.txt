@@ -1,0 +1,11 @@
+# Apple Silicon (M1–M4). PyTorch from PyPI includes MPS.
+# One-shot install: bash scripts/setup_mac.sh
+torch>=2.2
+numpy>=1.24
+opencv-python-headless>=4.8
+onnxruntime>=1.16
+PyYAML>=6.0
+scipy>=1.11
+tqdm>=4.66
+Pillow>=10.0
+certifi>=2024.0

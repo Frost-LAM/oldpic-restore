@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "old-photo-restore"
+version = "1.1.1"
+description = "Identity-faithful restoration for blurry, shaken, and old group photos (Apple Silicon MPS, CUDA, or CPU)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT AND S-Lab-1.0" }
+dependencies = [
+    "numpy>=1.24",
+    "opencv-python-headless>=4.8",
+    "onnxruntime>=1.16",
+    "PyYAML>=6.0",
+    "scipy>=1.11",
+    "tqdm>=4.66",
+    "Pillow>=10.0",
+    "certifi>=2024.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+old-photo-restore = "old_photo_restore.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["old_photo_restore*"]
+
+[tool.setuptools.package-data]
+old_photo_restore = ["default.yaml"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-m 'not smoke'"
+markers = [
+    "smoke: end-to-end CPU run; downloads weights and a public-domain photo",
+]

@@ -1,0 +1,10 @@
+# Linux CPU. Torch is installed by scripts/setup_linux.sh from the CPU index
+# so pip does not pull a CUDA wheel. Do not add torch to this file.
+numpy>=1.24
+opencv-python-headless>=4.8
+onnxruntime>=1.16
+PyYAML>=6.0
+scipy>=1.11
+tqdm>=4.66
+Pillow>=10.0
+certifi>=2024.0
